@@ -3,32 +3,31 @@ const express = require('express');
 const exphbs  = require('express-handlebars');
 const app = express();
 
-//Index route
+//index route
 app.get('/', (req, res) => {
-  
-  res.render('index')
-
+const title = 'Welcome !!'
+res.render('index',{
+    title:title
+  })
+ 
 });
 
-//About page
-
+//about page
 app.get('/about',(req,res) => {
-
-	res.send('about')
+res.render('about')
 })
 
-//Handlebars middleware
+//handlebars middleware
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
-//setting port
+//setting up port
 const port = 5000;
 
 
 
 
 app.listen(port, ()=> {
-
 	console.log(`Server is **LIVE** on port ${port}`)
 });
 
