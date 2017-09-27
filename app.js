@@ -34,10 +34,16 @@ res.render('index',{
  
 });
 
-//about page
+//about page route
 app.get('/about',(req,res) => {
 res.render('about')
 })
+
+//Add ideas page route
+app.get('/ideas/add',(req,res) => {
+res.render('ideas/add')
+})
+
 
 //handlebars middleware
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
