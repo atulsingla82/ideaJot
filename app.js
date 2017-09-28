@@ -4,7 +4,8 @@ const exphbs  = require('express-handlebars');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
-
+const flash = require('connect-flash');
+const session = require('express-session');
 const app = express();
 
 //require models
@@ -27,12 +28,30 @@ app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
 //body parser middleware
+app.use(express.static('views/images')); 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 
 //method override middleware
 app.use(methodOverride('_method'));
 
+//express session middleware
+app.use(session({
+  secret: 'secret',
+  resave: true,
+  saveUninitialized: true
+}))
+
+// connect flash
+app.use(flash());
+
+//global variables for success && error messages
+app.use((req, res, next ) => {
+ res.locals.success_msg = req.flash('success_msg')
+ res.locals.error_msg = req.flash('error_msg')
+ res.locals.error = req.flash('error')
+ next();
+});
 
 //load idea model
 const Idea = mongoose.model('ideas');
@@ -144,6 +163,7 @@ app.post('/ideas', (req, res) =>{
     app.delete('/ideas/:id', (req,res) => {
         Idea.remove({_id:req.params.id})
         .then(() => {
+        	req.flash('success_msg', 'Idea Removed')
         	res.redirect('/ideas')
         });
 
