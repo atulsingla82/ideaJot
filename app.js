@@ -1,5 +1,6 @@
 //require dependencies
 const express = require('express');
+const path = require('path');
 const exphbs  = require('express-handlebars');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser')
@@ -26,9 +27,12 @@ app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
 //body parser middleware
-app.use(express.static('views/images')); 
+
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
+
+//static folder
+app.use(express.static(path.join(__dirname,'public'))); 
 
 //method override middleware
 app.use(methodOverride('_method'));
