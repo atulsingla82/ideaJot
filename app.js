@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
 const flash = require('connect-flash');
+const passport = require ('passport');
 const session = require('express-session');
 const app = express();
 
@@ -80,8 +81,8 @@ res.render('about')
 })
 
 
-   
-
+//passport config file 
+require ('./config/passport')(passport);
   
 
 //setting up port

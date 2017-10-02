@@ -1,8 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-// const passport = require('passport');
+const passport = require('passport');
+
 const router = express.Router();
+
+
 
 // require user model
 require('../models/User');
@@ -17,82 +20,98 @@ const User = mongoose.model('users');
 
     });
 // User Register
-    router.get('/register', (req,res) => {
+	    router.get('/register', (req,res) => {
 
-     res.render('users/register')
+	     res.render('users/register')
 
-    });
+	    });
 
-    router.post('/register', (req,res) => {
-    	let errors = [];
+// Login form post
+  router.post('/login' ,(req, res, next) => {
+   
+   passport.authenticate('local', {
+    
+    sucessRedirect:'/ideas',
+    failureRedirect:'/users/login',
+    failureFlash:true
 
-    	if (req.body.password !== req.body.password2){
-    		errors.push({text:'Passwords do not match'})
-    	}
-    	if (req.body.password.length <= 5){
-    		errors.push({text:'Password must be at least 6 characters'})
-    	}
-    	
-    	if (errors.length > 0){
+   }) (req, res, next);
 
-    		res.render('users/register', {
-              
-              errors:errors,
-              name: req.body.name,
-              email:req.body.email,
-              password:req.body.password,
-              password2:req.body.password2
+  });
 
-             })
-    	}
-    	    else {
-                 User.findOne({email:req.body.email})
-                  .then(user => {
-                   if (user){
-                    
-                    req.flash('error_msg' , 'Email is already registered')
-                     res.redirect('/users/register')
-                   } else {
-                       
-                 const newUser = new User({
 
-                 name:req.body.name,
-                 email:req.body.email,
-                 password:req.body.password
 
-               })
+// Register form Post
+	    router.post('/register', (req,res) => {
+	    	let errors = [];
 
-               bcrypt.genSalt(10,(err,salt) => {
-                 
-                 bcrypt.hash(newUser.password,salt,(err,hash)=> {
-                    
-                    if(err)throw err;
-                    newUser.password = hash;
-                    newUser.save()
-                      .then(user => {
+	    	if (req.body.password !== req.body.password2){
+	    		errors.push({text:'Passwords do not match'})
+	    	}
+	    	if (req.body.password.length <= 5){
+	    		errors.push({text:'Password must be at least 6 characters'})
+	    	}
+	    	
+	    	if (errors.length > 0){
 
-                      	req.flash('success_msg' , 'You are registered')
-                      	res.send('users/login')
-                      })
+	    		res.render('users/register', {
+	              
+	              errors:errors,
+	              name: req.body.name,
+	              email:req.body.email,
+	              password:req.body.password,
+	              password2:req.body.password2
 
-                      .catch(err => {
+	             })
+	    	}
+	    	    else {
+	                 User.findOne({email:req.body.email})
+	                  .then(user => {
+	                   if (user){
+	                    
+	                    req.flash('error_msg' , 'Email is already registered')
+	                     res.redirect('/users/register')
+	                   } else {
+	                       
+	                 const newUser = new User({
 
-                      	console.log(err);
-                      	return;
-                      })
-                 })
+	                 name:req.body.name,
+	                 email:req.body.email,
+	                 password:req.body.password
 
-               });
+	               })
 
-                   }
+	               bcrypt.genSalt(10,(err,salt) => {
+	                 
+	                 bcrypt.hash(newUser.password,salt,(err,hash)=> {
+	                    
+	                    if(err)throw err;
+	                    newUser.password = hash;
+	                    newUser.save()
+	                      .then(user => {
 
-                  })
-               
-    	    	
-    	    }
-        // console.log(req.body)
-    	
-    })
+	                      	req.flash('success_msg' , 'You are registered')
+	                      	res.send('users/login')
+	                      })
+
+	                      .catch(err => {
+
+	                      	console.log(err);
+	                      	return;
+	                      })
+	                 })
+
+	               });
+
+	                   }
+
+	                  })
+	               
+	    	    	
+	    	    }
+	        // console.log(req.body)
+	    	
+	    })
 
 
 module.exports = router;
