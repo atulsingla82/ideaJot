@@ -14,6 +14,12 @@ const app = express();
 //map global promise to get rid of deprecation warning
 mongoose.Promise = global.Promise
 
+//Load Routes
+const ideas = require('./routes/ideas');
+const users = require('./routes/users');
+
+//passport config file 
+require ('./config/passport')(passport);
 
 //connect to mongoose 
 mongoose.connect('mongodb://localhost/ideajot-dev',{
@@ -44,21 +50,22 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }))
+  //Passport Middleware 
+  app.use(passport.initialize());
+  app.use(passport.session());
 
 // connect flash
 app.use(flash());
 
 //global variables for success && error messages
-app.use((req, res, next ) => {
+app.use(function(req, res, next ) {
  res.locals.success_msg = req.flash('success_msg')
  res.locals.error_msg = req.flash('error_msg')
  res.locals.error = req.flash('error')
+ res.locals.user = req.user || null;
  next();
 });
 
-//Load Routes
-const ideas = require('./routes/ideas');
-const users = require('./routes/users');
 
 // Use ideas Routes 
   app.use('/ideas' , ideas);
@@ -81,8 +88,7 @@ res.render('about')
 })
 
 
-//passport config file 
-require ('./config/passport')(passport);
+
   
 
 //setting up port

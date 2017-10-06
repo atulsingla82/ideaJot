@@ -31,7 +31,7 @@ const User = mongoose.model('users');
    
    passport.authenticate('local', {
     
-    sucessRedirect:'/ideas',
+    successRedirect:'/ideas',
     failureRedirect:'/users/login',
     failureFlash:true
 
@@ -90,8 +90,8 @@ const User = mongoose.model('users');
 	                    newUser.save()
 	                      .then(user => {
 
-	                      	req.flash('success_msg' , 'You are registered')
-	                      	res.send('users/login')
+	                      	req.flash('success_msg' , 'You are registered');
+	                      	res.redirect('/users/login')
 	                      })
 
 	                      .catch(err => {
@@ -112,6 +112,14 @@ const User = mongoose.model('users');
 	        // console.log(req.body)
 	    	
 	    })
+  
+  // Logout User 
 
+  router.get('/logout' , (req,res) =>{
+
+  	req.logout();
+  	req.flash('success_msg', 'You are logged out');
+  	res.redirect('/users/login');
+  })
 
 module.exports = router;

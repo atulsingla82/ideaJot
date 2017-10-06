@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
+const {ensureAuthenticated} = require('../helpers/auth');
 
 //require models
 require('../models/Idea')
@@ -10,12 +11,12 @@ const Idea = mongoose.model('ideas');
 
 
 //Add ideas form page route
-router.get('/add',(req,res) => {
+router.get('/add',ensureAuthenticated,(req,res) => {
 res.render('ideas/add')
 })
 
 // edit ideas form 
-router.get('/edit/:id',(req,res) => {
+router.get('/edit/:id',ensureAuthenticated,(req,res) => {
 	Idea.findOne({
 		_id:req.params.id
 	})
@@ -30,7 +31,7 @@ res.render('ideas/edit',{
 });
 
 //Add ideas index page route
-router.get('/',(req,res) => {
+router.get('/',ensureAuthenticated,(req,res) => {
 	Idea.find({})
 	.sort({date:'desc'})
 	.then(ideas => {
@@ -42,7 +43,7 @@ router.get('/',(req,res) => {
 
 
 // Post ideas route
-router.post('/', (req, res) =>{
+router.post('/',ensureAuthenticated, (req, res) =>{
   
   // res.send("hello")
   let errors = []
@@ -65,7 +66,7 @@ router.post('/', (req, res) =>{
   	const newUser = {
        title:req.body.title,
        details:req.body.details
-
+       user:req.user.id
   	}
 
   	new Idea(newUser)
@@ -80,7 +81,7 @@ router.post('/', (req, res) =>{
 
 // Edit Form process
 
-  router.put('/:id', (req, res) => {
+  router.put('/:id',ensureAuthenticated, (req, res) => {
     
     Idea.findOne({
     	_id:req.params.id
@@ -101,7 +102,7 @@ router.post('/', (req, res) =>{
 
   // Delete Idea
 
-    router.delete('/:id', (req,res) => {
+    router.delete('/:id',ensureAuthenticated, (req,res) => {
         Idea.remove({_id:req.params.id})
         .then(() => {
         	req.flash('success_msg', 'Listing Removed')
