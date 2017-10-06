@@ -2,4 +2,4 @@
 
 A CRUD app to "jot" down any ideas for your projects.
 
-NodeJS , Express , MongoDB , HandlebarsJS, Passport Authentication
+NodeJS , Express , MongoDB , HandlebarsJS, PassportJS Authentication
