@@ -21,8 +21,12 @@ const users = require('./routes/users');
 //passport config file 
 require ('./config/passport')(passport);
 
+//DB config 
+
+const db = require('./config/database');
+
 //connect to mongoose 
-mongoose.connect('mongodb://localhost/ideajot-dev',{
+mongoose.connect(db.mongoURI,{
 	useMongoClient:true
 })
 
@@ -92,7 +96,7 @@ res.render('about')
   
 
 //setting up port
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 
 
